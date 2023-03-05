@@ -36,86 +36,51 @@ contact_router.get("/v1/contacts", async(req, res)=>{
 
 contact_router.get("/v1/contacts/:id", async(req, res)=>{
     try {
-    let singlecontact = await ContactModel.findOne({id:req.params._id});
-    if(singlecontact){
+    let singlecontact = await ContactModel.findOne({_id:req.params.id});
         res.status(200).json({
             singlecontact
         })
-    } else{
-        res.status(404).json({
-            error:"There is no contact with that id"
-        })
-    } 
     } catch (error) {
         res.status(404).json({
-            message:error.message
+            message:"There is no contact with that id"
         })
     }
 })
 
 contact_router.delete("/v1/contacts/:id", async(req, res)=>{
    try {
-    const singlecontact = await ContactModel.findById({id:req.params._id})
-    if(singlecontact){
-     await ContactModel.deleteOne({id:req.params._id})
+     await ContactModel.deleteOne({_id:req.params.id})
      res.status(204).json({
-        none
+        status:"success"
      })
-    }else{
-        res.status(204).json({
-            error:"contact doesn't exist with thid id"
-        })
-    }
    } catch (error) {
-    error:"contact doesn't exist with thid id"
+    message:"contact doesn't exist with thid id"
    }
 })
 
 contact_router.put("/v1/contacts/:id", async(req, res)=>{
     try {
-        const contact = await ContactModel.findOne({id:req.params._id});
-        console.log(contact);
-        if(contact){
-         const updated = await contact.updateOne({
-                firstName:req.body.firstName,
-                lastName:req.body.lastName,
-                email:req.body.email,
-                phone:req.body.phone
-            })
+          await ContactModel.updateOne({_id:req.params.id}, req.body)
+          console.log("hiii")
             res.status(204).json({
-                updated
-            })
-        }else{
-            res.status(404).json({
-                error: "There is no contact with that id"
-            })
-        }
+                status:"success"
+            })        
     } catch (error) {
         res.status(404).json({
-            error: "There is no contact with that id",
-            message: error.message
+            message: "There is no contact with that id",
         })
     }
 })
 
 contact_router.patch("/v1/contacts/:id", async(req, res)=>{
     try {
-        const contact = await ContactModel.findOne({id:req.params._id});
-        console.log(contact);
-        if(contact){
-         const updated = await contact.updateOne(req.body)
+        await ContactModel.updateOne({_id:req.params.id}, {$set:{firstName:req.body.firstName}})
             res.status(204).json({
-                none
+                status:"success"
             })
-        }else{
-            res.status(404).json({
-                error: "There is no contact with that id"
-            })
-        }
     } catch (error) {
         res.status(404).json({
-            error: "There is no contact with that id",
-            message: error.message
+            message: "There is no contact with that id",
         })
     }
 })
